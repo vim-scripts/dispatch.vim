@@ -1,0 +1,11 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4504
+
+Leverage the power of Vim's compiler plugins without being bound by synchronicity.  Kick off builds and test suites using one of several asynchronous adapters (including tmux, screen, iTerm, Windows, and a headless mode), and when the job completes, errors will be loaded and parsed automatically.
+
+Details:
+
+https://github.com/tpope/vim-dispatch#readme
+
+Watch a video:
+
+https://vimeo.com/tpope/vim-dispatch-teaser
