@@ -5,14 +5,14 @@ if exists('g:autoloaded_dispatch_windows')
 endif
 let g:autoloaded_dispatch_windows = 1
 
-function! s:escape(str)
+function! s:escape(str) abort
   if &shellxquote ==# '"'
     return '"' . substitute(a:str, '"', '""', 'g') . '"'
   else
     let esc = exists('+shellxescape') ? &shellxescape : '"&|<>()@^'
-    return &shellquote .
+    return &shellxquote .
           \ substitute(a:str, '['.esc.']', '^&', 'g') .
-          \ get({'(': ')', '"(': ')"'}, &shellquote, &shellquote)
+          \ get({'(': ')', '"(': ')"'}, &shellxquote, &shellxquote)
   endif
 endfunction
 
@@ -40,9 +40,13 @@ function! dispatch#windows#make(request) abort
   if &shellxquote ==# '"'
     let exec = dispatch#prepare_make(a:request)
   else
-    let exec = escape(a:request.expanded, '%#!') .
+    let pidfile = a:request.file.'.pid'
+    let exec =
+          \ "wmic process where ^(Name='WMIC.exe' AND CommandLine LIKE '\\%\\%\\%TIME\\%\\%\\%'^) get ParentProcessId | more +1 > " . pidfile .
+          \ ' & ' . escape(a:request.expanded, '%#!') .
           \ ' ' . dispatch#shellpipe(a:request.file) .
           \ ' & cd . > ' . a:request.file . '.complete' .
+          \ ' & del ' . pidfile .
           \ ' & ' . dispatch#callback(a:request)
   endif
 
